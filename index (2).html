@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ripple Out EP: free download | Bardouin Music</title>
+<style>
+  :root{--bg:#f5f1e8;--fg:#1a1a1a;--muted:#6b6b6b;--card:#fff;--accent:#2f9fd8;--line:#d9d4c7}
+  @media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#f2f2f2;--muted:#9a9a9a;--card:#1c1c1c;--accent:#3cc3e6;--line:#333}}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--fg);
+       font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:1.5rem}
+  main{width:100%;max-width:380px;text-align:center}
+  .logo{display:block;width:150px;max-width:50%;margin:0 auto .6rem}
+  @media (prefers-color-scheme:dark){.logo{filter:invert(1)}}
+  .label{display:inline-block;margin-bottom:1rem;font-size:.85rem;color:var(--muted);text-decoration:none}
+  .cover{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;background:var(--line);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  h1{margin:1.25rem 0 .15rem;font-size:1.7rem}
+  .artist{margin:0 0 1rem;color:var(--muted)}
+  .intro{font-size:.92rem;color:var(--muted);margin:0 0 1rem}
+  form{display:flex;flex-direction:column;gap:.6rem}
+  input{padding:.85rem;border:1px solid var(--line);border-radius:8px;font-size:1rem;background:var(--card);color:var(--fg)}
+  button,.btn{display:block;padding:.85rem;border:0;border-radius:8px;background:var(--accent);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none}
+  button:disabled{opacity:.6;cursor:wait}
+  .ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+  #result{display:none;margin-top:1.25rem;gap:.6rem;flex-direction:column}
+  #code{font-family:ui-monospace,Menlo,monospace;font-size:2rem;letter-spacing:.08em;user-select:all}
+  #msg{margin-top:.9rem;font-size:.9rem;color:var(--muted);min-height:1.2em}
+  .player{margin:0 0 1.25rem;padding:1.1rem 1.1rem .6rem;border-radius:16px;background:#5bc0ef;color:#0b2a3d;text-align:left;box-shadow:0 10px 30px rgba(47,159,216,.35)}
+  .np-side{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+  .np-title{font-size:1.35rem;font-weight:700;margin:.15rem 0 .9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .scrub{display:flex;align-items:center;gap:.6rem;font-size:.75rem;font-variant-numeric:tabular-nums}
+  .bar{position:relative;flex:1;height:18px;cursor:pointer;touch-action:none}
+  .bar::before{content:"";position:absolute;left:0;right:0;top:7px;height:4px;border-radius:2px;background:rgba(11,42,61,.25)}
+  .bar i{position:absolute;left:0;top:7px;height:4px;width:0;border-radius:2px;background:#0b2a3d}
+  .bar b{position:absolute;top:3px;left:0;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#0b2a3d;transform:scale(0);transition:transform .15s}
+  .bar:hover b,.bar.drag b{transform:scale(1)}
+  .ctrls{display:flex;justify-content:center;align-items:center;gap:1.4rem;margin:.7rem 0 .5rem}
+  .ctrls button{background:none;color:#0b2a3d;padding:.4rem;border-radius:50%;display:grid;place-items:center;line-height:0}
+  .ctrls button svg{width:26px;height:26px;fill:currentColor}
+  .ctrls .big{width:56px;height:56px;padding:0;background:#0b2a3d;color:#fff;box-shadow:0 4px 12px rgba(11,42,61,.35)}
+  .ctrls .big svg{width:24px;height:24px}
+  .ctrls .big .ic-pause,.playing .ctrls .big .ic-play{display:none}
+  .playing .ctrls .big .ic-pause{display:block}
+  .list{list-style:none;margin:.4rem -.4rem 0;padding:0;border-top:1px solid rgba(11,42,61,.2)}
+  .list li{display:flex;align-items:center;gap:.8rem;padding:.7rem .4rem;border-radius:8px;cursor:pointer;font-size:.95rem}
+  .list li:hover{background:rgba(255,255,255,.25)}
+  .list .n{flex:none;width:1.8rem;font-size:.78rem;opacity:.65;font-variant-numeric:tabular-nums}
+  .list .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .list li.on{font-weight:700;background:rgba(255,255,255,.35)}
+  .list li.err{opacity:.45}
+  .eq{flex:none;display:flex;align-items:flex-end;gap:2px;width:16px;height:14px;visibility:hidden}
+  .eq s{display:block;width:3px;height:30%;background:#0b2a3d;border-radius:1px}
+  .playing .list li.on .eq{visibility:visible}
+  .playing .list li.on .eq s{animation:eq .9s ease-in-out infinite}
+  .eq s:nth-child(2){animation-delay:-.3s!important}.eq s:nth-child(3){animation-delay:-.6s!important}
+  @keyframes eq{0%,100%{height:25%}50%{height:100%}}
+  @media (prefers-reduced-motion:reduce){.playing .list li.on .eq s{animation:none;height:70%}}
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="logo.png" alt="Bardouin Music">
+  <a class="label" id="labelLink" href="#" target="_blank" rel="noopener"></a>
+  <img class="cover" id="cover" alt="Ripple Out EP cover art">
+  <h1 id="title"></h1>
+  <p class="artist" id="artist"></p>
+
+  <div class="player" id="player">
+    <div class="np-side" id="npSide">Preview the EP</div>
+    <div class="np-title" id="npTitle">Tap play</div>
+    <div class="scrub"><span id="cur">0:00</span><div class="bar" id="bar"><i></i><b></b></div><span id="dur">0:00</span></div>
+    <div class="ctrls">
+      <button id="prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM9.5 12 18 18V6z"/></svg></button>
+      <button class="big" id="pp" type="button" aria-label="Play / Pause">
+        <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="ic-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <button id="next" type="button" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+    </div>
+    <ol class="list" id="list"></ol>
+  </div>
+
+  <div id="formWrap">
+    <p class="intro">Enter your name to get your own free download code. Use the same name again and you'll get the same code back.</p>
+    <form id="form">
+      <input id="name" placeholder="Name" autocomplete="name" required maxlength="60">
+      <button id="go" type="submit">Get my code</button>
+    </form>
+  </div>
+
+  <div id="result">
+    <div>Your code:</div>
+    <div id="code"></div>
+    <button class="ghost" id="copy" type="button">Copy code</button>
+    <a class="btn" id="redeem" target="_blank" rel="noopener">Redeem on Bandcamp</a>
+  </div>
+  <div id="msg"></div>
+</main>
+
+<script>
+// ====== À MODIFIER ======
+const CONFIG = {
+  API_URL:    "https://script.google.com/macros/s/AKfycbyMBLXIaogYcyDQXvK__Lkzqh2yR1I3t1O7J3-64kd4rntQE121Zp5aaWC7RNMTE8M/exec",
+  LABEL_URL:  "https://bardouinmusic.bandcamp.com",
+  REDEEM_URL: "https://bardouinmusic.bandcamp.com/yum",   // page de rédemption Bandcamp
+  TITLE:      "Ripple Out EP",
+  ARTIST:     "Skwig",
+  TRACKS: [   // face, titre, nom du fichier mp3 (à la racine du repo)
+    { side: "A1", title: "Drippage", file: "drippage.mp3" },
+    { side: "A2", title: "Leakage",  file: "leakage.mp3"  },
+    { side: "B1", title: "Floodage", file: "floodage.mp3" },
+    { side: "B2", title: "Slippage", file: "slippage.mp3" }
+  ],
+  COVER:      "cover.jpg"                                    // mets ta pochette à côté de index.html
+};
+// ========================
+const $ = id => document.getElementById(id);
+$("labelLink").href = CONFIG.LABEL_URL; $("labelLink").textContent = CONFIG.LABEL_URL.replace("https://","");
+$("title").textContent = CONFIG.TITLE; $("artist").textContent = CONFIG.ARTIST; $("cover").src = CONFIG.COVER;
+
+function show(code){
+  $("code").textContent = code;
+  $("redeem").href = CONFIG.REDEEM_URL + "?code=" + encodeURIComponent(code);
+  $("result").style.display = "flex"; $("formWrap").style.display = "none";
+}
+$("form").onsubmit = async ev => {
+  ev.preventDefault();
+  const name = $("name").value.trim();
+  if (name.length < 2) return;
+  $("go").disabled = true; $("msg").textContent = "Getting your code…";
+  try {
+    const d = await (await fetch(CONFIG.API_URL + "?name=" + encodeURIComponent(name))).json();
+    if (d.ok) { show(d.code); $("msg").textContent = d.existing ? "Welcome back — here's your code again." : "Enjoy the music!"; }
+    else if (d.error === "sold_out") $("msg").textContent = "Sorry, all codes have been claimed.";
+    else $("msg").textContent = "Please enter a valid name.";
+  } catch (e) { $("msg").textContent = "Network error, please try again."; }
+  $("go").disabled = false;
+};
+$("copy").onclick = async () => {
+  await navigator.clipboard.writeText($("code").textContent);
+  $("copy").textContent = "Copied ✓"; setTimeout(() => $("copy").textContent = "Copy code", 1500);
+};
+// ---- Lecteur d'extraits ----
+(function(){
+  const T = CONFIG.TRACKS, audio = new Audio(), player = $("player"), bar = $("bar");
+  audio.preload = "none"; let cur = -1, drag = false;
+  const fmt = t => isFinite(t) ? Math.floor(t/60) + ":" + String(Math.floor(t%60)).padStart(2,"0") : "0:00";
+  const rows = T.map((tr, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = '<span class="n"></span><span class="t"></span><span class="eq"><s></s><s></s><s></s></span>';
+    li.children[0].textContent = tr.side; li.children[1].textContent = tr.title;
+    li.onclick = () => (i === cur ? toggle() : load(i));
+    $("list").appendChild(li); return li;
+  });
+  function load(i){
+    cur = i; audio.src = T[i].file;
+    rows.forEach((r, k) => r.classList.toggle("on", k === i));
+    $("npSide").textContent = T[i].side + " · Preview"; $("npTitle").textContent = T[i].title;
+    $("cur").textContent = "0:00"; $("dur").textContent = "0:00"; setPos(0);
+    if ("mediaSession" in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: T[i].title, artist: CONFIG.ARTIST, album: CONFIG.TITLE, artwork: [{ src: CONFIG.COVER }] });
+    audio.play().catch(() => {});
+  }
+  function toggle(){ if (cur < 0) return load(0); audio.paused ? audio.play() : audio.pause(); }
+  function prev(){ if (cur < 0) return; (audio.currentTime > 3 || cur === 0) ? (audio.currentTime = 0) : load(cur - 1); }
+  function next(){ if (cur < T.length - 1) load(cur + 1); else { audio.pause(); audio.currentTime = 0; } }
+  function setPos(r){ bar.querySelector("i").style.width = r*100 + "%"; bar.querySelector("b").style.left = r*100 + "%"; }
+  function seek(e){
+    if (!audio.duration) return;
+    const r = bar.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    audio.currentTime = audio.duration * ratio; setPos(ratio);
+  }
+  bar.onpointerdown = e => { drag = true; bar.classList.add("drag"); bar.setPointerCapture(e.pointerId); seek(e); };
+  bar.onpointermove = e => { if (drag) seek(e); };
+  bar.onpointerup = bar.onpointercancel = () => { drag = false; bar.classList.remove("drag"); };
+  $("pp").onclick = toggle; $("prev").onclick = prev; $("next").onclick = next;
+  audio.onplay = () => player.classList.add("playing");
+  audio.onpause = () => player.classList.remove("playing");
+  audio.onloadedmetadata = () => $("dur").textContent = fmt(audio.duration);
+  audio.ontimeupdate = () => { if (drag || !audio.duration) return; setPos(audio.currentTime / audio.duration); $("cur").textContent = fmt(audio.currentTime); };
+  audio.onended = next;
+  audio.onerror = () => { if (cur < 0) return; rows[cur].classList.add("err"); $("npSide").textContent = "Preview unavailable"; player.classList.remove("playing"); };
+  if ("mediaSession" in navigator) { navigator.mediaSession.setActionHandler("previoustrack", prev); navigator.mediaSession.setActionHandler("nexttrack", next); }
+})();
+</script>
+</body>
+</html>
