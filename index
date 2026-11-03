@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ripple Out EP: free download | Bardouin Music</title>
+<style>
+  :root{--bg:#f5f1e8;--fg:#1a1a1a;--muted:#6b6b6b;--card:#fff;--accent:#2f9fd8;--line:#d9d4c7}
+  @media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#f2f2f2;--muted:#9a9a9a;--card:#1c1c1c;--accent:#3cc3e6;--line:#333}}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--fg);
+       font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:1.5rem}
+  main{width:100%;max-width:380px;text-align:center}
+  .logo{display:block;width:150px;max-width:50%;margin:0 auto .6rem}
+  @media (prefers-color-scheme:dark){.logo{filter:invert(1)}}
+  .label{display:inline-block;margin-bottom:1rem;font-size:.85rem;color:var(--muted);text-decoration:none}
+  .cover{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;background:var(--line);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  h1{margin:1.25rem 0 .15rem;font-size:1.7rem}
+  .artist{margin:0 0 1rem;color:var(--muted)}
+  .intro{font-size:.92rem;color:var(--muted);margin:0 0 1rem}
+  form{display:flex;flex-direction:column;gap:.6rem}
+  input{padding:.85rem;border:1px solid var(--line);border-radius:8px;font-size:1rem;background:var(--card);color:var(--fg)}
+  button,.btn{display:block;padding:.85rem;border:0;border-radius:8px;background:var(--accent);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none}
+  button:disabled{opacity:.6;cursor:wait}
+  .ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+  #result{display:none;margin-top:1.25rem;gap:.6rem;flex-direction:column}
+  #code{font-family:ui-monospace,Menlo,monospace;font-size:2rem;letter-spacing:.08em;user-select:all}
+  #msg{margin-top:.9rem;font-size:.9rem;color:var(--muted);min-height:1.2em}
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="logo.png" alt="Bardouin Music">
+  <a class="label" id="labelLink" href="#" target="_blank" rel="noopener"></a>
+  <img class="cover" id="cover" alt="Ripple Out EP cover art">
+  <h1 id="title"></h1>
+  <p class="artist" id="artist"></p>
+
+  <div id="formWrap">
+    <p class="intro">Enter your name to get your own free download code. Use the same name again and you'll get the same code back.</p>
+    <form id="form">
+      <input id="name" placeholder="Name" autocomplete="name" required maxlength="60">
+      <button id="go" type="submit">Get my code</button>
+    </form>
+  </div>
+
+  <div id="result">
+    <div>Your code:</div>
+    <div id="code"></div>
+    <button class="ghost" id="copy" type="button">Copy code</button>
+    <a class="btn" id="redeem" target="_blank" rel="noopener">Redeem on Bandcamp</a>
+  </div>
+  <div id="msg"></div>
+</main>
+
+<script>
+// ====== À MODIFIER ======
+const CONFIG = {
+  API_URL:    "https://script.google.com/macros/s/AKfycbyMBLXIaogYcyDQXvK__Lkzqh2yR1I3t1O7J3-64kd4rntQE121Zp5aaWC7RNMTE8M/exec",
+  LABEL_URL:  "https://bardouinmusic.bandcamp.com",
+  REDEEM_URL: "https://bardouinmusic.bandcamp.com/yum",   // page de rédemption Bandcamp
+  TITLE:      "Ripple Out EP",
+  ARTIST:     "Skwig",
+  COVER:      "cover.jpg"                                    // mets ta pochette à côté de index.html
+};
+// ========================
+const $ = id => document.getElementById(id);
+$("labelLink").href = CONFIG.LABEL_URL; $("labelLink").textContent = CONFIG.LABEL_URL.replace("https://","");
+$("title").textContent = CONFIG.TITLE; $("artist").textContent = CONFIG.ARTIST; $("cover").src = CONFIG.COVER;
+
+function show(code){
+  $("code").textContent = code;
+  $("redeem").href = CONFIG.REDEEM_URL + "?code=" + encodeURIComponent(code);
+  $("result").style.display = "flex"; $("formWrap").style.display = "none";
+}
+$("form").onsubmit = async ev => {
+  ev.preventDefault();
+  const name = $("name").value.trim();
+  if (name.length < 2) return;
+  $("go").disabled = true; $("msg").textContent = "Getting your code…";
+  try {
+    const d = await (await fetch(CONFIG.API_URL + "?name=" + encodeURIComponent(name))).json();
+    if (d.ok) { show(d.code); $("msg").textContent = d.existing ? "Welcome back — here's your code again." : "Enjoy the music!"; }
+    else if (d.error === "sold_out") $("msg").textContent = "Sorry, all codes have been claimed.";
+    else $("msg").textContent = "Please enter a valid name.";
+  } catch (e) { $("msg").textContent = "Network error, please try again."; }
+  $("go").disabled = false;
+};
+$("copy").onclick = async () => {
+  await navigator.clipboard.writeText($("code").textContent);
+  $("copy").textContent = "Copied ✓"; setTimeout(() => $("copy").textContent = "Copy code", 1500);
+};
+</script>
+</body>
+</html>
